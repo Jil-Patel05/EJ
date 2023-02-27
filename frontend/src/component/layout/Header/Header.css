@@ -5,6 +5,9 @@
      font-size: 1.2rem;
      margin-right: 1.2rem;
 }
+.none{
+  display: none;
+}
 .collapse ul li{
   margin-left: 0.4rem;
   margin-right: 0.4rem;

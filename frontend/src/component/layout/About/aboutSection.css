@@ -92,9 +92,9 @@
  }
   @media screen and (max-width: 600px) {
   
-    footer{
+    /* footer{
       display: none;
-    }
+    } */
     .aboutSectionContainer {
       height: 80vh;
       margin-top: 3rem;
