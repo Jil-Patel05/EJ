@@ -21,10 +21,12 @@ const Header = () => {
   );
   const [click, setclick] = useState(true);
   const Clk = () => {
-    setclick(false);
+    if(window.innerWidth<=991)
+       setclick(false);
   }
   const Clk1 = () => {
-    setclick(true);
+    if(window.innerWidth<=991)
+      setclick(true);
   }
   const Routing = () => {
     if(user.role=='admin')
