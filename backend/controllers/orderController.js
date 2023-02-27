@@ -8,19 +8,17 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
   const {
     shippingInfo,
     orderItems,
-    paymentInfo,
+    // paymentInfo,
     itemsPrice,
     taxPrice,
     shippingPrice,
     totalPrice,
   } = req.body;
 
-  console.log("hello");
-
   const order = await Order.create({
     shippingInfo,
     orderItems,
-    paymentInfo,
+    // paymentInfo,
     itemsPrice,
     taxPrice,
     shippingPrice,
@@ -28,8 +26,6 @@ exports.newOrder = catchAsyncErrors(async (req, res, next) => {
     paidAt: Date.now(),
     user: req.user._id,
   });
-  console.log("hello");
-
   res.status(201).json({
     success: true,
     order,

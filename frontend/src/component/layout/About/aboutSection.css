@@ -5,7 +5,6 @@
     background-color: white;
     display: grid;
     grid-template-columns: 4fr 4fr;
-    position: fixed;
   }
   
   .aboutSectionGradient {
@@ -17,6 +16,7 @@
   }
   
   .aboutSectionContainer {
+    margin-top: 2.8rem;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -87,12 +87,22 @@
   .instagramSvgIcon {
     color: #d428c1f2;
   }
-  
+  footer{
+    margin-top: 0rem;
+ }
   @media screen and (max-width: 600px) {
+  
+    footer{
+      display: none;
+    }
+    .aboutSectionContainer {
+      height: 80vh;
+      margin-top: 3rem;
+    }
     .aboutSectionContainer > div {
       display: block;
     }
-  
+    
     .aboutSectionContainer > h1 {
       font: 400 5vmax "Roboto";
       margin: 3vmax;

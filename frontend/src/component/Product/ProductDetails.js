@@ -22,26 +22,21 @@ import {
 } from "@material-ui/core";
 import { Rating } from "@material-ui/lab";
 import { NEW_REVIEW_RESET } from "../../constants/productConstants";
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 const ProductDetails = () => {
-
- 
-
   const { id } = useParams();
   const dispatch = useDispatch();
   const alert = useAlert();
- 
-  console.log(id);
-  console.log("me");
-
+  const navigate = useNavigate();
   const { product, loading,error } = useSelector(
     (state) => state.productDetails
   );
-
-  console.log(product);
   const { success, error: reviewError } = useSelector(
     (state) => state.newReview
+  );
+  const {isAuthenticated,user } = useSelector(
+    (state) => state.user
   );
   // console.log(product.ratings);
   // if(typeof product !== 'undefined') {
@@ -83,39 +78,44 @@ const ProductDetails = () => {
   };
 
   const reviewSubmitHandler = () => {
-    const myForm = new FormData();
 
-    myForm.set("rating", rating);
-    myForm.set("comment", comment);
-    myForm.set("productId", id);
-
-    dispatch(newReview(myForm));
-
-    setOpen(false);
+    if (isAuthenticated) {
+      const myForm = new FormData();
+      myForm.set("rating", rating);
+      myForm.set("comment", comment);
+      myForm.set("productId", id);
+      dispatch(newReview(myForm));
+      setOpen(false);
+    }
+    else {
+      navigate("/login")
+    }
+   
   };
 
-  // useEffect(() => {
-    // if (error) {
-    //   alert.error(error);
-    //   dispatch(clearErrors());
-    // }
-
-  //   if (reviewError) {
-  //     alert.error(reviewError);
-  //     dispatch(clearErrors());
-  //   }
-
-  //   if (success) {
-  //     alert.success("Review Submitted Successfully");
-  //     dispatch({ type: NEW_REVIEW_RESET });
-  //   }
-  //   dispatch(getProductDetails(id));
-  // }, [dispatch, id, error, alert, reviewError, success]);
   useEffect(() => {
-   
-    console.log("hello");
+    if (error) {
+      alert.error(error);
+      dispatch(clearErrors());
+    }
+
+    if (reviewError) {
+      alert.error(reviewError);
+      dispatch(clearErrors());
+    }
+
+    if (success) {
+      alert.success("Review Submitted Successfully");
+      dispatch({ type: NEW_REVIEW_RESET });
+    }
     dispatch(getProductDetails(id));
-  }, [dispatch,id,alert,error]);
+  }, [dispatch, id, error, alert, reviewError, success]);
+
+  // useEffect(() => {
+   
+  //   console.log("hello");
+  //   dispatch(getProductDetails(id));
+  // }, [dispatch,id,alert,error]);
   
   console.log("picture");
 

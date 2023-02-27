@@ -36,17 +36,18 @@ export const getProduct =
   (keyword = "", currentPage = 1, price = [0, 25000], category, ratings = 0) =>
   async (dispatch) => {
     try {
-      console.log("success")
       dispatch({ type: ALL_PRODUCT_REQUEST });
+      console.log("im inside");
       let link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&ratings[gte]=${ratings}`;
 
       if (category) {
         link = `/api/v1/products?keyword=${keyword}&page=${currentPage}&price[gte]=${price[0]}&price[lte]=${price[1]}&category=${category}&ratings[gte]=${ratings}`;
       }
-
+      console.log("im outside");
       const { data } = await axios.get(link);
+      console.log("im data");
       // const { data } = await axios.get("/api/v1/products");
-
+      console.log("success")
       dispatch({
         type: ALL_PRODUCT_SUCCESS,
         payload: data,

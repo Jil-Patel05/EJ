@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useRef } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import CheckoutSteps from "../Cart/CheckoutSteps";
 import { useSelector, useDispatch } from "react-redux";
 import MetaData from "../layout/MetaData";
@@ -23,8 +23,8 @@ import { useNavigate } from "react-router-dom";
 
 
 const Payment = () => {
-    const stripe = useStripe();
-    const elements = useElements();
+    // const stripe = useStripe();
+    // const elements = useElements();
     const dispatch = useDispatch();
     const alert = useAlert();
    
@@ -39,6 +39,9 @@ const Payment = () => {
   const paymentData = {
     amount: Math.round(orderInfo.totalPrice * 100),
   };
+  const [num, setnum] = useState("");
+  const [d, setd] = useState("");
+  const [cv, setcv] = useState("");
 
   const order = {
     shippingInfo,
@@ -48,66 +51,38 @@ const Payment = () => {
     shippingPrice: orderInfo.shippingCharges,
     totalPrice: orderInfo.totalPrice,
   };
+  const JP = (e) => {
+     if(e.target.name==="number"){
+        setnum(e.target.value);
+     }
+     if(e.target.name==="date"){
+      setd(e.target.value);
+   }
+    if(e.target.name==="cvv"){
+    setcv(e.target.value);
+   }
+  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
     payBtn.current.disabled = true;
+    if (num.length !== 16 || d.length !== 5 || cv.length !== 3 ) {
+      alert.error("please fill data properly");
+       payBtn.current.disabled = false;
+      return;
+    }
 
     try {
-      const config = {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      };
-      const { data } = await axios.post(
-        "/api/v1/payment/process",
-        paymentData,
-        config
-      );
-
-      const client_secret = data.client_secret;
-
-      if (!stripe || !elements) return;
-
-      const result = await stripe.confirmCardPayment(client_secret, {
-        payment_method: {
-          card: elements.getElement(CardNumberElement),
-          billing_details: {
-            name: user.name,
-            email: user.email,
-            address: {
-              line1: shippingInfo.address,
-              city: shippingInfo.city,
-              state: shippingInfo.state,
-              postal_code: shippingInfo.pinCode,
-              country: shippingInfo.country,
-            },
-          },
-        },
-      });
-
-      if (result.error) {
-        payBtn.current.disabled = false;
-        alert.error(result.error.message);
-      }
-      else {
-        if (result.paymentIntent.status === "succeeded") {
-          order.paymentInfo = {
-            id: result.paymentIntent.id,
-            status: result.paymentIntent.status,
-          };
-
-          dispatch(createOrder(order));
-          navigate("/success");
-        } else {
-          alert.error("There's some issue while processing payment ");
-        }
-      }
-    } catch (error) {
-      payBtn.current.disabled = false;
-      alert.error(error.response.data.message);
+      dispatch(createOrder(order));
+      navigate("/success");
     }
+    catch (error) {
+      payBtn.current.disabled = false;
+      alert.error("Something went wrong in payment please do again")
+    }
+    setnum("");
+    setd("");
+    setcv("");
   };
 
   useEffect(() => {
@@ -119,22 +94,25 @@ const Payment = () => {
 
   return (
     <Fragment>
-          <MetaData title="Payment" />
+      <MetaData title="Payment" />
       <CheckoutSteps activeStep={2} />
       <div className="paymentContainer">
         <form className="paymentForm" onSubmit={(e) => submitHandler(e)}>
           <Typography>Card Info</Typography>
           <div>
             <CreditCardIcon />
-            <CardNumberElement className="paymentInput" />
+            {/* <CardNumberElement className="paymentInput" /> */}
+            <input type="text" className="paymentInput" name="number" onChange={JP} value={num}  placeholder="xxxx xxxx xxxx xxxx" required autoComplete="off" />
           </div>
           <div>
             <EventIcon />
-            <CardExpiryElement className="paymentInput" />
+            {/* <CardExpiryElement className="paymentInput" /> */}
+            <input type="text" className="paymentInput" name="date" onChange={JP} value={d} placeholder="MM/DD" required autoComplete="off" />
           </div>
           <div>
             <VpnKeyIcon />
-            <CardCvcElement className="paymentInput" />
+            {/* <CardCvcElement className="paymentInput" /> */}
+            <input type="password" className="paymentInput" name="cvv" onChange={JP} value={cv} placeholder="cvv" required autoComplete="off" />
           </div>
 
           <input
@@ -150,3 +128,51 @@ const Payment = () => {
 };
 
 export default Payment;
+
+// const config = {
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// };
+
+  //   const { data } = await axios.post(
+    //     "/api/v1/payment/process",
+    //     paymentData,
+    //     config
+    // );
+    //   const client_secret = data.client_secret;
+    //   console.log(client_secret);
+
+      // if (!stripe || !elements) return;
+
+      // const result = await stripe.confirmCardPayment(client_secret, {
+      //   payment_method: {
+      //     card: elements.getElement(CardNumberElement),
+      //     billing_details: {
+      //       name: user.name,
+      //       email: user.email,
+      //       address: {
+      //         line1: shippingInfo.address,
+      //         city: shippingInfo.city,
+      //         state: shippingInfo.state,
+      //         postal_code: shippingInfo.pinCode,
+      //         country: shippingInfo.country,
+      //       },
+      //     },
+      //   },
+      // });
+
+      // if (result.error) {
+      //   payBtn.current.disabled = false;
+      //   alert.error(result.error.message);
+      // }
+      // else {
+      //   if (result.paymentIntent.status === "succeeded") {
+      //     order.paymentInfo = {
+      //       id: result.paymentIntent.id,
+      //       status: result.paymentIntent.status,
+      //     };
+        // } else {
+          // alert.error("There's some issue while processing payment ");
+        // }
+      // }

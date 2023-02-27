@@ -96,7 +96,7 @@
     .shippingForm > div > input,
     .shippingForm > div > select {
       padding: 4vw 10vw;
-      font: 300 2vw cursive;
+      font: 300 4vw cursive;
     }
   
     .shippingForm > div > svg {
